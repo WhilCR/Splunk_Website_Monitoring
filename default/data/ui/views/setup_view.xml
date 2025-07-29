@@ -1,0 +1,17 @@
+<dashboard script="setup.js">
+  <label>Website Monitoring Setup</label>
+  <row>
+    <panel>
+      <title>Select Index for Data Ingestion</title>
+      <html>
+        <div id="setup-container">
+          <p>Choose the index where you want to store URL monitoring data:</p>
+          <select id="index-dropdown"></select>
+          <br/><br/>
+          <button id="save-config">Save</button>
+          <p id="status-msg" style="margin-top:1em;color:green;"></p>
+        </div>
+      </html>
+    </panel>
+  </row>
+</dashboard>
