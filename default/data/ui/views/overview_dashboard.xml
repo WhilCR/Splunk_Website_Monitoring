@@ -1,0 +1,34 @@
+<dashboard>
+  <label>Website Monitoring - Overview</label>
+  <row>
+    <panel>
+      <single>
+        <title>Average Response Time (ms)</title>
+        <search>
+          <query>index=website_monitoring sourcetype=website_monitoring:json | stats avg(response_time_ms) as avg_rt</query>
+        </search>
+        <option name="unit">ms</option>
+        <option name="field">avg_rt</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Availability (Successful checks %)</title>
+        <search>
+          <query>index=website_monitoring sourcetype=website_monitoring:json | eval ok=if(status_code="Error", 0, 1) | stats avg(ok) as uptime | eval uptime=round(uptime*100,1)</query>
+        </search>
+        <option name="unit">%</option>
+        <option name="field">uptime</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Certs Expiring in ≤30 Days</title>
+        <search>
+          <query>index=website_monitoring sourcetype=website_monitoring:json | where days_until_expiry &lt;= 30 | stats dc(url) as expiring</query>
+        </search>
+        <option name="field">expiring</option>
+      </single>
+    </panel>
+  </row>
+</dashboard>

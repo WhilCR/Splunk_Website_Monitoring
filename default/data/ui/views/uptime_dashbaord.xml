@@ -1,0 +1,33 @@
+<dashboard>
+  <label>Website Monitoring - Uptime</label>
+  <row>
+    <panel>
+      <title>Response Time by URL (Last 24h)</title>
+      <chart>
+        <search>
+          <query>
+            index=website_monitoring sourcetype=website_monitoring:json earliest=-24h
+            | timechart avg(response_time_ms) by url
+          </query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="height">300</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Errors by URL</title>
+      <chart>
+        <search>
+          <query>
+            index=website_monitoring sourcetype=website_monitoring:json earliest=-24h
+            | search status_code="Error"
+            | stats count by url
+          </query>
+        </search>
+        <option name="charting.chart">bar</option>
+      </chart>
+    </panel>
+  </row>
+</dashboard>

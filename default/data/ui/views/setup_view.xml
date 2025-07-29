@@ -2,14 +2,13 @@
   <label>Website Monitoring Setup</label>
   <row>
     <panel>
-      <title>Select Index for Data Ingestion</title>
+      <title>Manage URLs to Monitor</title>
       <html>
-        <div id="setup-container">
-          <p>Choose the index where you want to store URL monitoring data:</p>
-          <select id="index-dropdown"></select>
-          <br/><br/>
-          <button id="save-config">Save</button>
-          <p id="status-msg" style="margin-top:1em;color:green;"></p>
+        <div id="url-config">
+          <ul id="url-list"></ul>
+          <input type="text" id="new-url" placeholder="Enter URL (https://...)" />
+          <button id="add-url">Add URL</button>
+          <p id="save-status" style="margin-top:1em;"></p>
         </div>
       </html>
     </panel>

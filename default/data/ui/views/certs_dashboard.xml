@@ -1,0 +1,42 @@
+<dashboard>
+  <label>Website Monitoring - SSL Certificates</label>
+  <row>
+    <panel>
+      <title>SSL Certificate Expiration Table</title>
+      <table>
+        <search>
+          <query>
+            index=website_monitoring sourcetype=website_monitoring:json
+            | stats latest(cert_expiry) as cert_expiry latest(days_until_expiry) as days_until_expiry by url
+            | eval cert_status=case(
+                days_until_expiry &lt;= 7, "🔥 Expiring ≤7d",
+                days_until_expiry &lt;= 30, "⚠️ Expiring ≤30d",
+                1==1, "✅ OK"
+              )
+            | table url, cert_expiry, days_until_expiry, cert_status
+          </query>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>SSL Expiration Status Breakdown</title>
+      <chart>
+        <search>
+          <query>
+            index=website_monitoring sourcetype=website_monitoring:json
+            | stats latest(days_until_expiry) as days_until_expiry by url
+            | eval cert_status=case(
+                days_until_expiry &lt;= 7, "🔥 Expiring ≤7d",
+                days_until_expiry &lt;= 30, "⚠️ Expiring ≤30d",
+                1==1, "✅ OK"
+              )
+            | stats count by cert_status
+          </query>
+        </search>
+        <option name="charting.chart">pie</option>
+      </chart>
+    </panel>
+  </row>
+</dashboard>

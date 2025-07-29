@@ -1,0 +1,6 @@
+<nav>
+  <view name="setup_view" default="true" label="🔧 Setup" />
+  <view name="overview_dashboard" label="📊 Overview" />
+  <view name="uptime_dashboard" label="📈 Uptime Monitor" />
+  <view name="certs_dashboard" label="🔐 SSL Certificates" />
+</nav>

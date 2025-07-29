@@ -2,46 +2,59 @@ require([
     'jquery',
     'splunkjs/mvc',
     'splunkjs/mvc/simplexml/ready!'
-], function($, mvc) {
+], function($) {
 
-    function fetchIndexes() {
+    const collectionUrl = "/servicesNS/nobody/Splunk_Website_Monitoring/storage/collections/data/url_monitoring_targets";
+
+    function loadURLs() {
         $.ajax({
-            url: "/en-US/splunkd/__raw/services/data/indexes?output_mode=json",
+            url: collectionUrl,
             type: "GET",
             success: function(data) {
-                var entries = data.entry || [];
-                var dropdown = $('#index-dropdown');
-                dropdown.empty();
-                entries.forEach(function(item) {
-                    var name = item.name;
-                    dropdown.append(`<option value="${name}">${name}</option>`);
-                });
-            },
-            error: function(err) {
-                $('#status-msg').text("Error loading indexes.").css("color", "red");
+                const urls = data.map(entry => `<li>${entry.url} <button class="remove-url" data-id="${entry._key}">Remove</button></li>`);
+                $('#url-list').html(urls.join(""));
             }
         });
     }
 
-    function saveIndexSelection(index) {
+    function addURL(url) {
         $.ajax({
-            url: "/servicesNS/nobody/Splunk_Website_Monitoring/storage/collections/data/url_monitoring_config",
+            url: collectionUrl,
             type: "POST",
-            data: JSON.stringify({ index: index }),
             contentType: "application/json",
+            data: JSON.stringify({ url: url }),
             success: function() {
-                $('#status-msg').text("Configuration saved successfully.");
-            },
-            error: function() {
-                $('#status-msg').text("Failed to save config.").css("color", "red");
+                $('#new-url').val('');
+                $('#save-status').text("URL added.");
+                loadURLs();
             }
         });
     }
 
-    fetchIndexes();
+    function removeURL(id) {
+        $.ajax({
+            url: `${collectionUrl}/${id}`,
+            type: "DELETE",
+            success: function() {
+                $('#save-status').text("URL removed.");
+                loadURLs();
+            }
+        });
+    }
 
-    $('#save-config').on('click', function() {
-        const selectedIndex = $('#index-dropdown').val();
-        saveIndexSelection(selectedIndex);
+    $('#add-url').on('click', function() {
+        const url = $('#new-url').val().trim();
+        if (url.startsWith("http")) {
+            addURL(url);
+        } else {
+            $('#save-status').text("Invalid URL format.");
+        }
     });
+
+    $('#url-list').on('click', '.remove-url', function() {
+        const id = $(this).data('id');
+        removeURL(id);
+    });
+
+    loadURLs();
 });
